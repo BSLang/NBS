@@ -1,0 +1,30 @@
+﻿namespace BSParser
+{
+  syntax module BSGrammar
+  {
+    using PrettyPrint;
+    using Outline;
+    using TokenNames;
+    using StandardSpanClasses;
+    using Whitespaces;
+    using Identifiers;
+
+    [StartRule]
+    syntax CompilationUnit = TopLevelDeclaration* !Any;
+
+    [Identifier]
+    token Identifier = !Keyword IdentifierBody;
+
+    [Keyword]
+    token Keyword = Name=KeywordToken !IdentifierPartCharacters;
+
+      regex KeywordToken = "echo";
+
+    alias Name = Identifier;
+
+    syntax TopLevelDeclaration
+    {
+        | Class         = "class" sm Name
+    }
+  }
+}
