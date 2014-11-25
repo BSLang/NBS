@@ -9,8 +9,7 @@ namespace Tests
     [TestFixture]
     public class GrammarTests
     {
-        [TestCase("class Greeter { }")]
-        public void ParseCodeSnippet(string sourceCode)
+        private string ParseCodeSnippet(string sourceCode)
         {
             var sourceSnapshot = new SourceSnapshot(sourceCode);
             var parserHost = new ParserHost();
@@ -31,7 +30,17 @@ namespace Tests
             var parseTree = compilationUnit.CreateParseTree();
             var parsedCode = parseTree.ToString();
 
-            Console.WriteLine(parsedCode);
+            return parsedCode;
+        }
+
+        [TestCase("class Greeter { }")]
+        [TestCase("class Greeter { public function foo() { } }")]
+        public void Parse(string code)
+        {
+            
+            string result = ParseCodeSnippet(code);
+
+            Console.WriteLine(result);
         }
     }
 }

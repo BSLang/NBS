@@ -8,6 +8,7 @@
     using StandardSpanClasses;
     using Whitespaces;
     using Identifiers;
+    using Statements;
 
     [StartRule]
     syntax CompilationUnit = TopLevelDeclaration* !Any;
@@ -19,7 +20,7 @@
     token Keyword = Name=KeywordToken !IdentifierPartCharacters;
 
     regex KeywordToken =   "echo" 
-                         | "class";
+                         | "class" | "function";
 
     alias Name = Identifier;
 
@@ -30,6 +31,24 @@
 
     syntax TypeBody = outline_begin_before "{" inl ClassMemberDeclaration* d "}" ";"? nl outline_end_before;
     
-    syntax ClassMemberDeclaration;
+    syntax ClassMemberDeclaration
+    {
+        | Function                  = Modifiers "function" FunctionHeader Body;
+    }
+
+    syntax FunctionHeader = sm Name "(" ")";
+
+    syntax Body
+    {
+      | Block = nl outline_begin_before "{"  "}" ";"? nl outline_end_before;
+      | Empty = ";" nl;
+    }
+
+    syntax Modifiers = Modifier*;
+
+    syntax Modifier
+    {
+      | Public    = "public"sm;
+    }
   }
 }
