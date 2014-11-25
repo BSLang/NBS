@@ -18,13 +18,18 @@
     [Keyword]
     token Keyword = Name=KeywordToken !IdentifierPartCharacters;
 
-      regex KeywordToken = "echo";
+    regex KeywordToken =   "echo" 
+                         | "class";
 
     alias Name = Identifier;
 
     syntax TopLevelDeclaration
     {
-        | Class         = "class" sm Name
+        | Class                      = "class" sm Name inl TypeBody;
     }
+
+    syntax TypeBody = outline_begin_before "{" inl ClassMemberDeclaration* d "}" ";"? nl outline_end_before;
+    
+    syntax ClassMemberDeclaration;
   }
 }
