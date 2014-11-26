@@ -24,7 +24,7 @@ namespace Tests
                         Environment.NewLine, x.Location.Source.GetSourceLine(x.Location.StartPos).GetText()))));
             }
 
-            Assert.That(compilationUnit.IsSuccess, Is.True);
+            Assert.IsTrue(compilationUnit.IsSuccess);
 
             // Get pretty-printed version of parse tree.
             var parseTree = compilationUnit.CreateParseTree();
@@ -33,11 +33,19 @@ namespace Tests
             return parsedCode;
         }
 
-        [TestCase("class Greeter { }")]
-        [TestCase("class Greeter { public function foo() { } }")]
+        [TestCase("class Greeter:")]
+        [TestCase(
+@"class Greeter:
+    public function foo()
+        ;
+")]
+        [TestCase(
+@"class Greeter:
+    public function foo(€name)
+        ;
+")]
         public void Parse(string code)
         {
-            
             string result = ParseCodeSnippet(code);
 
             Console.WriteLine(result);

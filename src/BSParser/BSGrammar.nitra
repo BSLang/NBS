@@ -26,22 +26,24 @@
 
     syntax TopLevelDeclaration
     {
-        | Class                      = "class" sm Name inl TypeBody;
+        | Class                      = "class" sm Name ":" TypeBody;
     }
 
-    syntax TypeBody = outline_begin_before "{" inl ClassMemberDeclaration* d "}" ";"? nl outline_end_before;
+    syntax TypeBody = outline_begin_before inl ClassMemberDeclaration* d nl outline_end_before;
     
     syntax ClassMemberDeclaration
     {
         | Function                  = Modifiers "function" FunctionHeader Body;
     }
 
-    syntax FunctionHeader = sm Name "(" ")";
+    syntax FunctionHeader = sm Name "(" FunctionParameters? ")";
+
+    syntax FunctionParameter  = "€" Name;
+    syntax FunctionParameters = FunctionParameter ("," sm FunctionParameter)*;
 
     syntax Body
     {
-      | Block = nl outline_begin_before "{"  "}" ";"? nl outline_end_before;
-      | Empty = ";" nl;
+      | Empty = inl ";" nl;
     }
 
     syntax Modifiers = Modifier*;
