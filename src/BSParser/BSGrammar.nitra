@@ -31,6 +31,8 @@
     alias Name = Identifier;
     alias BooleanExpression = Expression;
 
+    syntax ThisAccess = ParameterPrefix "this";
+
     syntax Expression
     {
       | BooleanLiteral;
@@ -38,22 +40,27 @@
       | FunctionParameter;
       | Equal = Expression sm "==" sm Expression precedence 90;
       | NotEqual = Expression sm "!=" sm Expression precedence 90;
+
+
+      | Assignment = Expression sm "="  sm Expression precedence  10 right-associative;
+
+
+      | ThisAccess;
+      | MemberAccess = ThisAccess "->" Name;
     }
 
     syntax TopLevelDeclaration
     {
-        | Class                      = "class" sm Name ":" TypeBody;
+      | Class  = "class" sm Name ":" TypeBody;
     }
 
     syntax TypeBody = outline_begin_before inl ClassMemberDeclaration* d nl outline_end_before;
     
     syntax ClassMemberDeclaration
     {
-        | Function      = Modifiers "function" FunctionHeader Body;
-        | Constructor   = Modifiers "function" sm "__construct" " (" FunctionParameters? ")" Body;
+      | Function      = Modifiers "function" FunctionHeader Body;
+      | Constructor   = Modifiers "function" sm "__construct" " (" FunctionParameters? ")" Body;
     }
-
-    syntax HaltAndCatchFire = Space Space "HALT_AND_CATCH_FIRE" inl "(" "unless" sm BooleanExpression ")" nl;
 
     syntax FunctionHeader = sm Name "(" FunctionParameters? ")";
 
@@ -68,9 +75,11 @@
 
     syntax Statement
     {
+      | Expression = Expression GreekSemicolonQuestionThing nl;
       | Exception = HaltAndCatchFire;
-
     }
+
+    syntax HaltAndCatchFire = Space Space "HALT_AND_CATCH_FIRE" inl "(" "unless" sm BooleanExpression ")" nl;
 
     syntax Modifiers = Modifier*;
 

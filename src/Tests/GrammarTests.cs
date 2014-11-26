@@ -58,6 +58,10 @@ namespace Tests
     public function __construct(€name)
         HALT_AND_CATCH_FIRE
       (unless €name != null)")]
+        [TestCase(
+@"class Greeter:
+    public function __construct(€name)
+      €this->name = €name;")]
         public void Parse(string code)
         {
             string result = ParseCodeSnippet(code);
