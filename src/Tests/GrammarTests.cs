@@ -65,7 +65,7 @@ namespace Tests
         [TestCase(
 @"class Greeter:
     public function __construct(€name)
-      echo ""hello"", 'hello', ' ',  €this->name;")]
+      echo ""hello"", 'hello', ' ',  €this->name, BS::EOL;")]
         public void Parse(string code)
         {
             string result = ParseCodeSnippet(code);

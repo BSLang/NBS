@@ -42,19 +42,24 @@
     [SpanClass(String)]
     token AnsiStringLiteral = "'" RegularStringLiteralPart* "'";
 
-    regex KeywordToken =   "echo" | "unless"
-                         | "class" | "function"
-                         | NullLiteral;
+    regex KeywordToken =   "echo" | "unless" | "class" | "function" | NullLiteral | ThisAccess;
 
     regex GreekSemicolonQuestionThing = ";";
     regex ParameterPrefix = "€";
     regex BooleanLiteral = "true" | "false";
     regex NullLiteral = "null" | "Nothing" | "undefined" | "nada" | "Empty" | "default";
+    regex ThisAccess = ParameterPrefix "this";
 
     alias Name = Identifier;
+    alias QualifiedName = QualifiedIdentifier;
     alias BooleanExpression = Expression;
 
-    syntax ThisAccess = ParameterPrefix "this";
+    [ExplicitSpaces]
+    syntax QualifiedIdentifier  = QualifiedAlias? (QualifiedIdentifierPart; s "->" s)+;
+
+    [ExplicitSpaces]
+    syntax QualifiedIdentifierPart = Identifier;
+    syntax QualifiedAlias = Alias = Identifier "::";
 
     syntax Expression
     {
@@ -64,15 +69,15 @@
       
       | AsciiStringLiteral;
       | AnsiStringLiteral;
-
+      | QualifiedName;
 
       | Equal = Expression sm "==" sm Expression precedence 90;
       | NotEqual = Expression sm "!=" sm Expression precedence 90;
 
       | Assignment = Expression sm "="  sm Expression precedence  10 right-associative;
 
-      | ThisAccess;
-      | MemberAccess = ThisAccess "->" Name;
+      | MemberAccess = Expression ^ 150 "->" QualifiedName;
+      | StaticMemberAccess = Expression ^ 150 "::" QualifiedName;
     }
 
     syntax TopLevelDeclaration
