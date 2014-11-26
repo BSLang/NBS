@@ -11,7 +11,7 @@ namespace Tests
     {
         private const string GreekSemicolonQuestionThing = ";";
 
-        private string ParseCodeSnippet(string sourceCode)
+        public static string ParseCodeSnippet(string sourceCode)
         {
             var sourceSnapshot = new SourceSnapshot(sourceCode);
             var parserHost = new ParserHost();
@@ -65,6 +65,11 @@ namespace Tests
         [TestCase(
 @"class Greeter:
     public function __construct(€name)
+      echo ""hello"", 'hello', ' ',  €this->name, BS::EOL;")]
+        [TestCase(
+@"class Greeter:
+    public function __construct(€name)
+      €this->name = €name;
       echo ""hello"", 'hello', ' ',  €this->name, BS::EOL;")]
         public void Parse(string code)
         {
