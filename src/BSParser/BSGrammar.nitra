@@ -19,13 +19,20 @@
     [Keyword]
     token Keyword = Name=KeywordToken !IdentifierPartCharacters;
 
-    regex KeywordToken =   "echo" 
+    regex KeywordToken =   "echo" | "unless"
                          | "class" | "function";
 
     regex GreekSemicolonQuestionThing = ";";
     regex ParameterPrefix = "€";
+    regex BooleanLiteral = "true" | "false";
 
     alias Name = Identifier;
+    alias BooleanExpression = Expression;
+
+    syntax Expression
+    {
+      | BooleanLiteral;
+    }
 
     syntax TopLevelDeclaration
     {
@@ -36,9 +43,11 @@
     
     syntax ClassMemberDeclaration
     {
-        | Function                  = Modifiers "function" FunctionHeader Body;
-        | Constructor               = Modifiers "function" sm "__construct" " (" FunctionParameters? ")" Body;
+        | Function      = Modifiers "function" FunctionHeader Body;
+        | Constructor   = Modifiers "function" sm "__construct" " (" FunctionParameters? ")" Body;
     }
+
+    syntax HaltAndCatchFire = Space Space "HALT_AND_CATCH_FIRE" inl Space Space "(" "unless" BooleanExpression ")" nl;
 
     syntax FunctionHeader = sm Name "(" FunctionParameters? ")";
 
@@ -47,7 +56,13 @@
 
     syntax Body
     {
+      | Block = outline_begin_before inl Statement* d GreekSemicolonQuestionThing? nl outline_end_before;
       | Empty = inl GreekSemicolonQuestionThing nl;
+    }
+
+    syntax Statement
+    {
+      | Exception         = HaltAndCatchFire;
     }
 
     syntax Modifiers = Modifier*;

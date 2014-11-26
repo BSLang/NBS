@@ -48,6 +48,12 @@ namespace Tests
 @"class Greeter:
     public function __construct(€name)
         ;")]
+        [TestCase(
+@"class Greeter:
+    public function __construct(€name)
+            HALT_AND_CATCH_FIRE
+          (unless true)
+        ;")]
         public void Parse(string code)
         {
             string result = ParseCodeSnippet(code);
