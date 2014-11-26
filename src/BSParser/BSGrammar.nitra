@@ -20,11 +20,13 @@
     token Keyword = Name=KeywordToken !IdentifierPartCharacters;
 
     regex KeywordToken =   "echo" | "unless"
-                         | "class" | "function";
+                         | "class" | "function"
+                         | NullLiteral;
 
     regex GreekSemicolonQuestionThing = ";";
     regex ParameterPrefix = "€";
     regex BooleanLiteral = "true" | "false";
+    regex NullLiteral = "null" | "Nothing" | "undefined" | "nada" | "Empty" | "default";
 
     alias Name = Identifier;
     alias BooleanExpression = Expression;
@@ -32,6 +34,10 @@
     syntax Expression
     {
       | BooleanLiteral;
+      | NullLiteral;
+      | FunctionParameter;
+      | Equal = Expression sm "==" sm Expression precedence 90;
+      | NotEqual = Expression sm "!=" sm Expression precedence 90;
     }
 
     syntax TopLevelDeclaration
@@ -47,7 +53,7 @@
         | Constructor   = Modifiers "function" sm "__construct" " (" FunctionParameters? ")" Body;
     }
 
-    syntax HaltAndCatchFire = Space Space "HALT_AND_CATCH_FIRE" inl Space Space "(" "unless" BooleanExpression ")" nl;
+    syntax HaltAndCatchFire = Space Space "HALT_AND_CATCH_FIRE" inl "(" "unless" sm BooleanExpression ")" nl;
 
     syntax FunctionHeader = sm Name "(" FunctionParameters? ")";
 
@@ -62,7 +68,8 @@
 
     syntax Statement
     {
-      | Exception         = HaltAndCatchFire;
+      | Exception = HaltAndCatchFire;
+
     }
 
     syntax Modifiers = Modifier*;

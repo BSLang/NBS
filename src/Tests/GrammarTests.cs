@@ -39,21 +39,25 @@ namespace Tests
         [TestCase(
 @"class Greeter:
     public function foo()
-        ;")]
+      ;")]
         [TestCase(
 @"class Greeter:
     public function foo(€name)
-        ;")]
+      ;")]
         [TestCase(
 @"class Greeter:
     public function __construct(€name)
-        ;")]
+      ;")]
         [TestCase(
 @"class Greeter:
     public function __construct(€name)
-            HALT_AND_CATCH_FIRE
-          (unless true)
-        ;")]
+        HALT_AND_CATCH_FIRE
+      (unless true)")]
+        [TestCase(
+@"class Greeter:
+    public function __construct(€name)
+        HALT_AND_CATCH_FIRE
+      (unless €name != null)")]
         public void Parse(string code)
         {
             string result = ParseCodeSnippet(code);
