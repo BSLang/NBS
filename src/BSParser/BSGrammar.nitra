@@ -22,6 +22,8 @@
     regex KeywordToken =   "echo" 
                          | "class" | "function";
 
+    regex GreekSemicolonQuestionThing = ";";
+
     alias Name = Identifier;
 
     syntax TopLevelDeclaration
@@ -43,7 +45,7 @@
 
     syntax Body
     {
-      | Empty = inl ";" nl;
+      | Empty = inl GreekSemicolonQuestionThing nl;
     }
 
     syntax Modifiers = Modifier*;

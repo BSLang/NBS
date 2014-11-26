@@ -9,6 +9,8 @@ namespace Tests
     [TestFixture]
     public class GrammarTests
     {
+        private const string GreekSemicolonQuestionThing = ";";
+
         private string ParseCodeSnippet(string sourceCode)
         {
             var sourceSnapshot = new SourceSnapshot(sourceCode);
@@ -37,13 +39,11 @@ namespace Tests
         [TestCase(
 @"class Greeter:
     public function foo()
-        ;
-")]
+        ;")]
         [TestCase(
 @"class Greeter:
     public function foo(€name)
-        ;
-")]
+        ;")]
         public void Parse(string code)
         {
             string result = ParseCodeSnippet(code);
