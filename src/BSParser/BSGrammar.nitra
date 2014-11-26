@@ -19,6 +19,29 @@
     [Keyword]
     token Keyword = Name=KeywordToken !IdentifierPartCharacters;
 
+    regex NotAllowedRegularStringLiteralChar = NewLineCharacter | "\"" | "\\" | "'";
+    regex SimpleEscapeSequence                = "\\'" | "\\\"" | "\\\\" | "\\0" | "\\a" | "\\b" | "\\f" | "\\n" | "\\r" | "\\t" | "\\v";
+    
+    regex DecimalDigit                        = ['0'..'9'];
+    regex HexDigit                            = ['0'..'9', 'a'..'f', 'A'..'F'];
+    regex UnicodeEscapeSequence_u             = "\\u" HexDigit HexDigit HexDigit HexDigit;
+    regex UnicodeEscapeSequence_U             = "\\U" HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit;
+    regex UnicodeEscapeSequence               = UnicodeEscapeSequence_u | UnicodeEscapeSequence_U;
+    regex HexadecimalEscapeSequence           = "\\x" HexDigit HexDigit? HexDigit? HexDigit?;
+
+    token RegularStringLiteralPart
+    {
+      | SimpleEscapeSequenceStrPart           = SimpleEscapeSequence;
+      | UnicodeEscapeSequenceStrPart          = UnicodeEscapeSequence;
+      | HexadecimalEscapeSequenceStrPart      = HexadecimalEscapeSequence;
+      | RegularStringLiteralCharacterSequence = (!NotAllowedRegularStringLiteralChar Any)+;
+    }
+
+    [SpanClass(String)]
+    token AsciiStringLiteral = "\"" RegularStringLiteralPart* "\"";
+    [SpanClass(String)]
+    token AnsiStringLiteral = "'" RegularStringLiteralPart* "'";
+
     regex KeywordToken =   "echo" | "unless"
                          | "class" | "function"
                          | NullLiteral;
@@ -38,12 +61,15 @@
       | BooleanLiteral;
       | NullLiteral;
       | FunctionParameter;
+      
+      | AsciiStringLiteral;
+      | AnsiStringLiteral;
+
+
       | Equal = Expression sm "==" sm Expression precedence 90;
       | NotEqual = Expression sm "!=" sm Expression precedence 90;
 
-
       | Assignment = Expression sm "="  sm Expression precedence  10 right-associative;
-
 
       | ThisAccess;
       | MemberAccess = ThisAccess "->" Name;
@@ -73,9 +99,13 @@
       | Empty = inl GreekSemicolonQuestionThing nl;
     }
 
+    syntax ArgumentList = (Argument; ","sm)*;
+    syntax Argument = Expression;
+
     syntax Statement
     {
       | Expression = Expression GreekSemicolonQuestionThing nl;
+      | Echo = "echo" sm ArgumentList;
       | Exception = HaltAndCatchFire;
     }
 
