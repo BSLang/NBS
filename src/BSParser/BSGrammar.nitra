@@ -23,6 +23,7 @@
                          | "class" | "function";
 
     regex GreekSemicolonQuestionThing = ";";
+    regex ParameterPrefix = "€";
 
     alias Name = Identifier;
 
@@ -36,11 +37,12 @@
     syntax ClassMemberDeclaration
     {
         | Function                  = Modifiers "function" FunctionHeader Body;
+        | Constructor               = Modifiers "function" sm "__construct" " (" FunctionParameters? ")" Body;
     }
 
     syntax FunctionHeader = sm Name "(" FunctionParameters? ")";
 
-    syntax FunctionParameter  = "€" Name;
+    syntax FunctionParameter  = ParameterPrefix Name;
     syntax FunctionParameters = FunctionParameter ("," sm FunctionParameter)*;
 
     syntax Body
